@@ -15,17 +15,16 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    // img: {
-    //     type: String,
-    //     required: true,
-    // },
-    // Members: { //  subscribers
-    //     type: Number,
-    //     default: 0,
-    // },
-    // groupUsers: { // subscribed users
-    //     type: [String]
-    // }
+    img: {
+        type: String,
+    },
+    subscribers: { //  subscribers
+        type: Number,
+        default: 0,
+    },
+    subscribedUsers: { // subscribed users
+        type: [String], // in this array there will be many Id's.
+    }
 }, { timestamps: true });
 
 export default mongoose.model("User", UserSchema)
