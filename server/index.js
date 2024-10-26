@@ -20,7 +20,7 @@ const connect = () => {
 
 const PORT = 3000;
 
-app.use(cookieParser())
+app.use(cookieParser()) // parsing cookies into objects making them easy to read and manipulate.
 app.use(express.json())
 
 // routes

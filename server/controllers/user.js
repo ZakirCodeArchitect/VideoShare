@@ -2,11 +2,13 @@ import { createError } from "../error.js"
 import User from "../models/user.js"
 
 export const update = async(req, res, next) => {
+    // This line checks if the id in the URL parameters (req.params.id) matches the id of the authenticated user (req.user.id).
+    // req.user.id is set by the verifyToken middleware after verifying the JWT, ensuring the user is authenticated and has the correct id.
     if (req.params.id === req.user.id) {
         try {
             const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-                $set: req.body
-            }, { new: true });
+                $set: req.body // ensures that only the fields in req.body are updated.
+            }, { new: true }); // specifies that the updated document should be returned, not the original.
             res.status(200).json(updatedUser)
         } catch (err) {
             next(err)
@@ -38,10 +40,13 @@ export const getUser = async(req, res, next) => {
 }
 export const subscribe = async(req, res, next) => {
     try {
-        await User.findByIdAndUpdate(req.user.id, {
+
+        // This keeps track of which users the subscriber has subscribed to.
+        await User.findByIdAndUpdate(req.user.id, { // This ID is available because it was set by authentication middleware, like verifyToken, which decoded the JWT.
             $push: { subscribedUsers: req.params.id }
         })
 
+        // This line finds the user being subscribed to (identified by req.params.id) and increments their subscribers count by 1.
         await User.findByIdAndUpdate(req.params.id, {
             $inc: { subscribers: 1 }
         })
