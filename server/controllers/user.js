@@ -1,5 +1,6 @@
 import { createError } from "../error.js"
 import User from "../models/user.js"
+import video from "../models/video.js";
 
 export const update = async(req, res, next) => {
     // This line checks if the id in the URL parameters (req.params.id) matches the id of the authenticated user (req.user.id).
@@ -72,15 +73,38 @@ export const unsubscribe = async(req, res, next) => {
     }
 }
 export const like = async(req, res, next) => {
-    try {
 
+    const id = req.user.id;
+    const videoId = req.params.videoId;
+
+    console.log("User ID:", id); // Log user ID for debugging
+    console.log("Video ID:", videoId); // Log video ID for debugging
+
+    try {
+        await video.findByIdAndUpdate(videoId, {
+            // using instead of push because if i like it again , it's gonna keep pushing.
+            $addToSet: { likes: id },
+            $pull: { dislikes: id }
+        }, { new: true })
+        res.status(200).json("The video has been Liked")
     } catch (err) {
         next(err)
     }
 }
 export const dislike = async(req, res, next) => {
-    try {
+    const id = req.user.id;
+    const videoId = req.params.videoId;
 
+    console.log("User ID:", id); // Log user ID for debugging
+    console.log("Video ID:", videoId); // Log video ID for debugging
+
+    try {
+        await video.findByIdAndUpdate(videoId, {
+            // using instead of push because if i like it again , it's gonna keep pushing.
+            $addToSet: { dislikes: id },
+            $pull: { likes: id }
+        })
+        res.status(200).json("The video has been disLiked")
     } catch (err) {
         next(err)
     }
